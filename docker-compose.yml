@@ -1,0 +1,106 @@
+services:
+  gateway:
+    image: nginx
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+
+    depends_on:
+      - auth-service
+      - chat-service
+      - resume-service
+      - embedding-service
+      - notification-service
+
+  frontend:
+    build:
+      context: ./apps/frontend
+
+    ports:
+      - "3000:3000"
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+
+    ports:
+      - "8001:8000"
+    
+    depends_on:
+      - postgres
+
+  chat-service:
+    build:
+      context: ./services/chat-service
+
+    ports:
+      - "8002:8000"
+
+  resume-service:
+    build:
+      context: ./services/resume-service
+
+    ports:
+      - "8003:8000"
+
+    depends_on:
+      - postgres
+
+    env_file:
+      - ./services/resume-service/.env
+
+  resume-worker-service:
+    build:
+      context: ./services/resume-worker-service
+
+    depends_on:
+      - rabbitmq
+
+  embedding-service:
+    build:
+      context: ./services/embedding-service
+
+    ports:
+      - "8004:8000"
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+
+    ports:
+      - "8005:8000"
+
+  worker:
+    build:
+      context: ./workers/ai-worker
+
+  postgres:
+    image: postgres:16
+
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ai_platform
+
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:management
+
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
