@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
+from .config import DATABASE_URL
 
-DATABASE_URL = (
-    "postgresql://admin:admin@postgres:5432/ai_platform"
-)
+
 
 engine = create_engine(DATABASE_URL)
 

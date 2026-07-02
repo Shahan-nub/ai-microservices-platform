@@ -38,6 +38,6 @@ def startup():
 
             break
 
-        except Exception:
-
+        except Exception as e:
+            print(e)
             time.sleep(2)
