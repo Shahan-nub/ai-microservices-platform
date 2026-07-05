@@ -65,6 +65,9 @@ services:
     depends_on:
       - rabbitmq
 
+    env_file:
+      - ./services/resume-worker-service/.env
+
   embedding-service:
     build:
       context: ./services/embedding-service

@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "app/worker.py"]
+CMD ["python", "-m", "app.worker"]
