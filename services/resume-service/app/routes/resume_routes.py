@@ -16,16 +16,14 @@ from ..services.pdf_service import (
 # )
 
 from ..models import ResumeAnalysis
-
 from ..db_dependency import get_db
-
 from ..auth.auth_dependency import (
     get_current_user
 )
-
 from ..services.rabbitmq_service import (
     publish_resume_job
 )
+from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -147,3 +145,33 @@ def history(
     )
 
     return analyses
+
+
+
+@router.get("/status/{analysis_id}")
+def get_status(
+    analysis_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    analysis = (
+        db.query(ResumeAnalysis)
+        .filter(
+            ResumeAnalysis.id == analysis_id,
+            ResumeAnalysis.user_email == current_user["sub"]
+        )
+        .first()
+    )
+
+    if not analysis:
+        raise HTTPException(
+            status_code=404,
+            detail="Analysis not found"
+        )
+
+    return {
+        "id": analysis.id,
+        "status": analysis.status,
+        "ats_score": analysis.ats_score,
+        "analysis": analysis.analysis,
+    }

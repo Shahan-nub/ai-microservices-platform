@@ -1,8 +1,31 @@
-import { createApiClient, notImplemented } from "@/lib/api";
+import api from "@/lib/axios";
 
-export const resumeApi = createApiClient();
+export async function uploadResume(file: File) {
+  const formData = new FormData();
 
-export const uploadResume = (): never => notImplemented("Resume");
-export const getResumeStatus = (): never => notImplemented("Resume");
-export const getResumeAnalysis = (): never => notImplemented("Resume");
-export const getResumeHistory = (): never => notImplemented("Resume");
+  formData.append("file", file);
+
+  const res = await api.post(
+    "/resume/analyze",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return res.data;
+}
+
+export async function getResumeStatus(id: number) {
+  const res = await api.get(`/resume/status/${id}`);
+
+  return res.data;
+}
+
+export async function getResumeHistory() {
+  const res = await api.get("/resume/history");
+
+  return res.data;
+}

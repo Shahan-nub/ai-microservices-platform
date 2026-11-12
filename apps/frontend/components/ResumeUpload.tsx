@@ -2,39 +2,124 @@
 
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import { FileText, UploadCloud, X } from "lucide-react";
+import { UploadCloud, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  uploadResume,
+  getResumeStatus,
+} from "@/services/resume";
 
-export function ResumeUpload() {
-  const [file, setFile] = useState<File | null>(null);
-  const [dragging, setDragging] = useState(false);
+export function ResumeUpload({
+  onCompleted,
+}: {
+  onCompleted: (result: any) => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const accept = (files: FileList | null) => files?.[0] && setFile(files[0]);
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const [dragging, setDragging] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const accept = (files: FileList | null) => {
+    if (files?.length) {
+      setFile(files[0]);
+    }
+  };
+
+  async function analyze() {
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const job = await uploadResume(file);
+
+      const interval = setInterval(async () => {
+        const status = await getResumeStatus(job.job_id);
+
+        if (status.status === "completed") {
+          clearInterval(interval);
+
+          onCompleted(status);
+
+          setLoading(false);
+        }
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
-      <input ref={inputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={(event) => accept(event.target.files)} />
+      <input
+        ref={inputRef}
+        type="file"
+        hidden
+        accept=".pdf,.doc,.docx"
+        onChange={(e) => accept(e.target.files)}
+      />
+
       <motion.div
-        animate={{ borderColor: dragging ? "rgba(139,92,246,.7)" : "rgba(255,255,255,.1)" }}
-        onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
+        animate={{
+          borderColor: dragging
+            ? "rgba(139,92,246,.7)"
+            : "rgba(255,255,255,.1)",
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
         onDragLeave={() => setDragging(false)}
-        onDrop={(event) => { event.preventDefault(); setDragging(false); accept(event.dataTransfer.files); }}
-        className={cn("rounded-2xl border border-dashed bg-white/[0.02] p-8 text-center transition sm:p-12", dragging && "bg-violet-500/[0.04]")}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          accept(e.dataTransfer.files);
+        }}
+        className={cn(
+          "rounded-2xl border border-dashed bg-white/[0.02] p-8 text-center",
+          dragging && "bg-violet-500/[0.04]"
+        )}
       >
-        <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-violet-500/10 text-violet-300 ring-1 ring-violet-500/20"><UploadCloud className="size-6" /></span>
-        <h2 className="mt-5 text-sm font-semibold text-zinc-200">Drop your resume here</h2>
-        <p className="mt-2 text-xs text-zinc-600">PDF, DOC, or DOCX · Maximum 10 MB</p>
-        <Button variant="secondary" size="sm" className="mt-5" onClick={() => inputRef.current?.click()}>Choose file</Button>
+        <UploadCloud className="mx-auto size-8 text-violet-400" />
+
+        <h2 className="mt-4 text-white text-lg font-semibold">
+          Upload Resume
+        </h2>
+
+        <Button
+          className="mt-5"
+          onClick={() => inputRef.current?.click()}
+        >
+          Choose File
+        </Button>
       </motion.div>
+
       {file && (
-        <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.025] p-3">
-          <span className="grid size-9 place-items-center rounded-lg bg-cyan-500/10 text-cyan-300"><FileText className="size-4" /></span>
-          <div className="min-w-0 flex-1"><p className="truncate text-xs font-medium text-zinc-300">{file.name}</p><p className="text-[10px] text-zinc-600">{(file.size / 1024 / 1024).toFixed(2)} MB · Ready to analyze</p></div>
-          <button onClick={() => setFile(null)} aria-label="Remove file" className="rounded-lg p-2 text-zinc-600 hover:bg-white/5 hover:text-zinc-300"><X className="size-4" /></button>
+        <div className="mt-4 flex items-center gap-3 rounded-lg border border-white/10 p-3">
+          <FileText className="text-violet-400" />
+
+          <div className="flex-1 truncate text-sm text-zinc-300">
+            {file.name}
+          </div>
+
+          <button onClick={() => setFile(null)}>
+            <X className="text-zinc-400 hover:text-white" />
+          </button>
         </div>
       )}
-      <Button className="mt-4 w-full" disabled={!file}>Analyze resume</Button>
+
+      <Button
+        className="mt-5 w-full"
+        disabled={!file || loading}
+        onClick={analyze}
+      >
+        {loading ? "Analyzing..." : "Analyze Resume"}
+      </Button>
     </div>
   );
 }

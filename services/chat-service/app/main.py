@@ -2,12 +2,23 @@ from fastapi import FastAPI
 
 from .routes.chat_routes import router
 from .db import engine
-from .models import Base
-
+from .models import Base 
+from fastapi.middleware.cors import CORSMiddleware
 import time
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(
     router,
