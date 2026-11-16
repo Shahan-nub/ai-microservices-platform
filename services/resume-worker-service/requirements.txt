@@ -2,5 +2,6 @@ pika
 google-generativeai
 sqlalchemy
 psycopg2-binary
+psycopg[binary]
 python-dotenv
 pymupdf
