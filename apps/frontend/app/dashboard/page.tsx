@@ -5,12 +5,22 @@ import Link from "next/link";
 import { DashboardCard } from "@/components/DashboardCard";
 import { PageHeader } from "@/components/PageHeader";
 import { FEATURES } from "@/lib/constants";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function DashboardPage() {
+  const { user, displayName } = useAuth();
+  const emailName = user?.email
+    .split("@", 1)[0]
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+  const greetingName = displayName || user?.name?.trim() || emailName || "there";
+
   return (
     <div className="subtle-grid min-h-[calc(100vh-4.25rem)] p-4 sm:p-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
-        <PageHeader eyebrow="Overview" title="Good evening, Shahan" description="Everything you need to turn ideas and information into useful work." />
+        <PageHeader eyebrow="Overview" title={`Good evening, ${greetingName}`} description="Everything you need to turn ideas and information into useful work." />
 
         <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {FEATURES.map((feature, index) => <DashboardCard key={feature.title} {...feature} index={index} />)}

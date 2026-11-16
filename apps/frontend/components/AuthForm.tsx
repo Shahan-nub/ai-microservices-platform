@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { isAxiosError } from "axios";
 import { motion } from "motion/react";
 import { Code2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
@@ -39,6 +40,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           password: data.password,
         });
 
+        auth.saveDisplayName(data.email, data.name ?? "");
         alert("Account created successfully!");
 
         router.push("/login");
@@ -48,12 +50,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           password: data.password,
         });
 
-        auth.login(response.access_token);
+        auth.login(response.access_token, data.email);
 
         router.push("/dashboard");
       }
-    } catch (error: any) {
-      alert(error?.response?.data?.detail || "Authentication failed");
+    } catch (error: unknown) {
+      const detail = isAxiosError<{ detail?: string }>(error)
+        ? error.response?.data?.detail
+        : undefined;
+      alert(detail || "Authentication failed");
     }
   };
 
