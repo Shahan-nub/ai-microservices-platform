@@ -144,7 +144,7 @@ export function NotificationCenter() {
             </div>
           ) : visibleItems.length === 0 ? (
             <p className="px-5 py-10 text-center text-sm text-muted-foreground">
-              {filter === "unread" ? "You’re all caught up." : "No notifications yet. Resume analysis updates will appear here."}
+              {filter === "unread" ? "You’re all caught up." : "Chat replies and resume analysis updates will appear here."}
             </p>
           ) : (
             visibleItems.map((notification, index) => (

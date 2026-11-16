@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends 
+from fastapi import APIRouter, Depends, HTTPException
 
 from ..schemas import ChatRequest, ChatResponse
 from ..gemini_service import ask_gemini
 
 from sqlalchemy.orm import Session
+from google.api_core.exceptions import NotFound, ResourceExhausted
 
-from ..models import Chat
+from ..models import Chat, Notification
 
 from ..db_dependency import get_db
 
@@ -25,9 +26,18 @@ def chat(
     current_user = Depends(get_current_user)
 ):
 
-    answer = ask_gemini(
-        req.prompt
-    )
+    try:
+        answer = ask_gemini(req.prompt)
+    except ResourceExhausted as exc:
+        raise HTTPException(
+            status_code=429,
+            detail="The AI provider quota has been reached. Please try again later or check your Gemini API quota.",
+        ) from exc
+    except NotFound as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="The configured Gemini model is unavailable to this API project.",
+        ) from exc
 
     chat = Chat(
 
@@ -40,8 +50,23 @@ def chat(
     )
 
     db.add(chat)
-
     db.commit()
+    db.refresh(chat)
+
+    try:
+        db.add(Notification(
+            user_email=current_user["sub"],
+            event_key="chat-response:" + str(chat.id),
+            title="Chat reply ready",
+            description="Your assistant has finished responding to your message.",
+            type="info",
+            unread=True,
+        ))
+        db.commit()
+    except Exception as exc:
+        # A notification failure should not prevent the completed chat reply.
+        db.rollback()
+        print("Unable to save chat notification:", exc)
 
     return {
         "response": answer

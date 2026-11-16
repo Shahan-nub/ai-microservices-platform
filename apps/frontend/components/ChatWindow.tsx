@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import { motion } from "motion/react";
 import { Bot, Copy, RotateCcw, Sparkles } from "lucide-react";
 import { ChatInput } from "@/components/ChatInput";
@@ -72,8 +73,12 @@ export function ChatWindow() {
       };
 
       setMessages((prev) => [...prev, aiMessage]);
+      window.dispatchEvent(new Event("nexora:notifications-changed"));
     } catch (err) {
-      alert("Failed to send message");
+      const detail = isAxiosError<{ detail?: string }>(err)
+        ? err.response?.data?.detail
+        : undefined;
+      alert(detail || "Failed to send message. Please try again.");
     }
 
     setLoading(false);

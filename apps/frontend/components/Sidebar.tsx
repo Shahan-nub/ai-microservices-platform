@@ -3,12 +3,13 @@
 import { AnimatePresence, motion } from "motion/react";
 import { Bell, FileSearch, LayoutDashboard, LogOut, MessageSquareText, ScanSearch, Settings, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { DASHBOARD_NAV } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { NotificationBadge } from "@/components/NotificationBadge";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const icons = { LayoutDashboard, MessageSquareText, FileSearch, ScanSearch, Bell };
 
@@ -19,6 +20,14 @@ interface SidebarProps {
 
 function SidebarContent({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  function handleSignOut() {
+    logout();
+    onClose();
+    router.replace("/login");
+  }
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-17 items-center justify-between border-b border-border px-5">
@@ -52,7 +61,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
       </div>
       <div className="mt-auto space-y-1 border-t border-border p-3">
         <button className="flex h-10 w-full items-center gap-3 rounded-sm px-3 text-sm text-muted-foreground transition hover:bg-[#e8e1d8] hover:text-foreground"><Settings className="size-4.5" />Settings</button>
-        <Link href="/login" className="flex h-10 items-center gap-3 rounded-sm px-3 text-sm text-muted-foreground transition hover:bg-[#e8e1d8] hover:text-foreground"><LogOut className="size-4.5" />Sign out</Link>
+        <button type="button" onClick={handleSignOut} className="flex h-10 w-full items-center gap-3 rounded-sm px-3 text-left text-sm text-muted-foreground transition hover:bg-[#e8e1d8] hover:text-foreground"><LogOut className="size-4.5" />Sign out</button>
       </div>
     </div>
   );

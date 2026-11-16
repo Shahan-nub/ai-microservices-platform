@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import { getCurrentUser, type CurrentUser } from "@/services/auth";
 
 interface AuthContextType {
@@ -39,6 +40,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
       })
       .catch((error: unknown) => {
+        if (isAxiosError(error) && [401, 404].includes(error.response?.status ?? 0)) {
+          localStorage.removeItem("token");
+          document.cookie = `token=; Path=/; Max-Age=0; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
+          setToken("");
+          setUser(null);
+          setDisplayName("");
+          return;
+        }
+
         console.error("Unable to load the current user:", error);
       });
 

@@ -19,6 +19,9 @@ services:
     build:
       context: ./apps/frontend
 
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8000
+
     volumes:
       - ./apps/frontend:/app
       - /app/node_modules
