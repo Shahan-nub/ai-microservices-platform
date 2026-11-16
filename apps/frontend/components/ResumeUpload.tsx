@@ -22,6 +22,7 @@ export function ResumeUpload({
   const [dragging, setDragging] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [analysisError, setAnalysisError] = useState("");
 
   const accept = (files: FileList | null) => {
     if (files?.length) {
@@ -33,23 +34,38 @@ export function ResumeUpload({
     if (!file) return;
 
     setLoading(true);
+    setAnalysisError("");
 
     try {
       const job = await uploadResume(file);
 
-      const interval = setInterval(async () => {
-        const status = await getResumeStatus(job.job_id);
+      const interval = window.setInterval(() => {
+        void getResumeStatus(job.job_id)
+          .then(async (status) => {
+            if (status.status !== "completed" && status.status !== "failed") return;
 
-        if (status.status === "completed") {
-          clearInterval(interval);
+            window.clearInterval(interval);
 
-          onCompleted(status);
+            window.dispatchEvent(new Event("nexora:notifications-changed"));
 
-          setLoading(false);
-        }
+            if (status.status === "completed") {
+              onCompleted(status);
+            } else {
+              setAnalysisError("Resume analysis failed. You can try uploading the file again.");
+            }
+
+            setLoading(false);
+          })
+          .catch((err: unknown) => {
+            window.clearInterval(interval);
+            console.error(err);
+            setAnalysisError("Could not retrieve the analysis status. Please try again.");
+            setLoading(false);
+          });
       }, 2000);
     } catch (err) {
       console.error(err);
+      setAnalysisError("The resume could not be submitted. Please try again.");
       setLoading(false);
     }
   }
@@ -67,8 +83,8 @@ export function ResumeUpload({
       <motion.div
         animate={{
           borderColor: dragging
-            ? "rgba(139,92,246,.7)"
-            : "rgba(255,255,255,.1)",
+            ? "rgba(82,67,51,.55)"
+            : "rgba(39,32,25,.18)",
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -81,13 +97,13 @@ export function ResumeUpload({
           accept(e.dataTransfer.files);
         }}
         className={cn(
-          "rounded-2xl border border-dashed bg-white/[0.02] p-8 text-center",
-          dragging && "bg-violet-500/[0.04]"
+          "rounded-sm border border-dashed bg-[#f7f3ed] p-8 text-center",
+          dragging && "bg-[#e6ddd2]"
         )}
       >
-        <UploadCloud className="mx-auto size-8 text-violet-400" />
+        <UploadCloud className="mx-auto size-8 text-accent" />
 
-        <h2 className="mt-4 text-white text-lg font-semibold">
+        <h2 className="editorial-title mt-4 text-3xl text-foreground">
           Upload Resume
         </h2>
 
@@ -100,8 +116,8 @@ export function ResumeUpload({
       </motion.div>
 
       {file && (
-        <div className="mt-4 flex items-center gap-3 rounded-lg border border-white/10 p-3">
-          <FileText className="text-violet-400" />
+        <div className="mt-4 flex items-center gap-3 rounded-sm border border-border bg-card p-3">
+          <FileText className="text-accent" />
 
           <div className="flex-1 truncate text-sm text-zinc-300">
             {file.name}
@@ -120,6 +136,12 @@ export function ResumeUpload({
       >
         {loading ? "Analyzing..." : "Analyze Resume"}
       </Button>
+
+      {analysisError && (
+        <p role="alert" className="mt-3 text-sm text-rose-700">
+          {analysisError}
+        </p>
+      )}
     </div>
   );
 }

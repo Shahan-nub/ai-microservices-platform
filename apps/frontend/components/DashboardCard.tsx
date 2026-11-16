@@ -16,22 +16,22 @@ interface DashboardCardProps {
 }
 
 const accents = {
-  violet: "bg-violet-500/10 text-violet-300 ring-violet-500/20",
-  cyan: "bg-cyan-500/10 text-cyan-300 ring-cyan-500/20",
-  amber: "bg-amber-500/10 text-amber-300 ring-amber-500/20",
-  rose: "bg-rose-500/10 text-rose-300 ring-rose-500/20",
+  violet: "bg-[#e6ddd2] text-[#615344] ring-[#d2c7ba]",
+  cyan: "bg-[#e6ddd2] text-[#615344] ring-[#d2c7ba]",
+  amber: "bg-[#e6ddd2] text-[#615344] ring-[#d2c7ba]",
+  rose: "bg-[#e6ddd2] text-[#615344] ring-[#d2c7ba]",
 };
 
 export function DashboardCard({ title, description, href, icon: Icon, accent, stat, index = 0 }: DashboardCardProps) {
   return (
-    <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.07, duration: 0.4 }} whileHover={{ y: -4 }} className="group glass-panel rounded-2xl p-5 transition-colors hover:border-white/15">
+    <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.07, duration: 0.4 }} whileHover={{ y: -3 }} className="group glass-panel rounded-sm p-5 transition-colors hover:border-[#76624f]">
       <div className="flex items-start justify-between">
-        <span className={cn("grid size-11 place-items-center rounded-xl ring-1", accents[accent])}><Icon className="size-5" /></span>
-        <span className="rounded-full border border-white/[0.07] bg-white/[0.025] px-2.5 py-1 text-[10px] text-zinc-500">{stat}</span>
+        <span className={cn("grid size-11 place-items-center rounded-sm ring-1", accents[accent])}><Icon className="size-5" /></span>
+        <span className="rounded-sm border border-border bg-background px-2.5 py-1 text-[9px] tracking-[0.12em] text-muted-foreground uppercase">{stat}</span>
       </div>
-      <h2 className="mt-7 text-base font-semibold text-zinc-100">{title}</h2>
+      <h2 className="editorial-title mt-7 text-2xl text-foreground">{title}</h2>
       <p className="mt-2 min-h-10 text-sm leading-5 text-muted-foreground">{description}</p>
-      <Link href={href} className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-zinc-300 transition group-hover:text-white">Open tool <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link>
+      <Link href={href} className="mt-6 inline-flex items-center gap-2 border-t border-border pt-3 text-[10px] font-medium tracking-[0.12em] text-foreground uppercase">Open tool <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link>
     </motion.article>
   );
 }

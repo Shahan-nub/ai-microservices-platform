@@ -3,9 +3,54 @@ import time
 
 import pika
 
-from app.db import SessionLocal
-from app.models import ResumeAnalysis
+from app.db import Base, SessionLocal, engine
+from app.models import Notification, ResumeAnalysis
 from app.gemini_service import analyze_resume
+
+
+def add_resume_notification(db, row, completed):
+    event_status = "completed" if completed else "failed"
+    event_key = "resume-analysis:" + str(row.id) + ":" + event_status
+    existing = (
+        db.query(Notification)
+        .filter(
+            Notification.user_email == row.user_email,
+            Notification.event_key == event_key,
+        )
+        .first()
+    )
+    if existing:
+        return
+
+    if completed:
+        title = "Resume analysis complete"
+        description = "Resume analysis #" + str(row.id) + " completed with an ATS score of " + str(row.ats_score) + "."
+        notification_type = "success"
+    else:
+        title = "Resume analysis failed"
+        description = "Resume analysis #" + str(row.id) + " could not be completed. Please try uploading it again."
+        notification_type = "warning"
+
+    db.add(Notification(
+        user_email=row.user_email,
+        event_key=event_key,
+        title=title,
+        description=description,
+        type=notification_type,
+        unread=True,
+    ))
+
+
+for attempt in range(10):
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Resume worker tables ready")
+        break
+    except Exception as exc:
+        if attempt == 9:
+            raise
+        print("Database not ready for resume worker:", exc)
+        time.sleep(2)
 
 
 def callback(ch, method, properties, body):
@@ -33,6 +78,7 @@ def callback(ch, method, properties, body):
         row.analysis = result["analysis"]
         row.ats_score = result["ats_score"]
         row.status = "completed"
+        add_resume_notification(db, row, completed=True)
 
         db.commit()
 
@@ -55,6 +101,7 @@ def callback(ch, method, properties, body):
 
             if row:
                 row.status = "failed"
+                add_resume_notification(db, row, completed=False)
                 db.commit()
 
         except Exception:

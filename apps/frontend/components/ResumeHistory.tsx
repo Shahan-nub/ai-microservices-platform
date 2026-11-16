@@ -36,13 +36,13 @@ export function ResumeHistory() {
 
   return (
     <>
-      <section className="glass-panel rounded-2xl p-6">
+      <section className="glass-panel rounded-sm p-6">
 
         <div className="mb-6 flex items-center gap-3">
 
-          <FileText className="size-5 text-violet-400" />
+          <FileText className="size-5 text-accent" />
 
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="editorial-title text-3xl text-foreground">
             Resume History
           </h2>
 
@@ -63,7 +63,7 @@ export function ResumeHistory() {
 
               <thead>
 
-                <tr className="border-b border-white/10 text-left text-sm text-zinc-500">
+                <tr className="border-b border-border text-left text-sm text-muted-foreground">
 
                   <th className="py-3">ID</th>
 
@@ -83,7 +83,7 @@ export function ResumeHistory() {
 
                   <tr
                     key={item.id}
-                    className="border-b border-white/5 hover:bg-white/[0.03]"
+                    className="border-b border-border hover:bg-[#e8e1d8]"
                   >
 
                     <td className="py-4 font-medium">
@@ -92,7 +92,7 @@ export function ResumeHistory() {
 
                     <td>
 
-                      <span className="font-semibold text-violet-400">
+                      <span className="font-semibold text-accent">
                         {item.ats_score}
                       </span>
 
@@ -103,8 +103,8 @@ export function ResumeHistory() {
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
                           item.status === "completed"
-                            ? "bg-green-500/15 text-green-400"
-                            : "bg-yellow-500/15 text-yellow-400"
+                            ? "border border-border bg-[#e6ddd2] text-[#615344]"
+                            : "border border-border bg-background text-muted-foreground"
                         }`}
                       >
                         {item.status}
@@ -141,9 +141,9 @@ export function ResumeHistory() {
 
       {selected && (
 
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#211d19]/30 backdrop-blur-sm">
 
-          <div className="relative w-full max-w-3xl rounded-2xl border border-white/10 bg-[#11141d] p-8">
+          <div className="relative w-full max-w-3xl rounded-sm border border-border bg-card p-8">
 
             <button
               onClick={() => setSelected(null)}
@@ -176,7 +176,7 @@ export function ResumeHistory() {
                   Status
                 </p>
 
-                <p className="font-semibold capitalize text-green-400">
+                <p className="font-semibold capitalize text-accent">
                   {selected.status}
                 </p>
 
@@ -184,7 +184,7 @@ export function ResumeHistory() {
 
             </div>
 
-            <div className="mt-8 max-h-[60vh] overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-5">
+            <div className="mt-8 max-h-[60vh] overflow-y-auto rounded-sm border border-border bg-background p-5">
 
               <pre className="whitespace-pre-wrap text-sm leading-7 text-zinc-300">
                 {selected.analysis}

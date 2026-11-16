@@ -81,9 +81,9 @@ export function ChatWindow() {
 
   return (
     <div className="flex h-[calc(100vh-4.25rem)] flex-col">
-      <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3 sm:px-6">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
-          <span className="grid size-9 place-items-center rounded-xl bg-violet-500/10 text-violet-300">
+          <span className="grid size-9 place-items-center rounded-sm border border-border bg-[#e6ddd2] text-accent">
             <Sparkles className="size-4" />
           </span>
 
@@ -92,8 +92,8 @@ export function ChatWindow() {
               Nexora Assistant
             </p>
 
-            <p className="text-[11px] text-emerald-400">
-              <span className="mr-1 inline-block size-1.5 rounded-full bg-emerald-400" />
+            <p className="text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+              <span className="mr-1 inline-block size-1.5 rounded-full bg-accent" />
               Online
             </p>
           </div>
@@ -101,7 +101,7 @@ export function ChatWindow() {
 
         <button
           onClick={() => setMessages([])}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+          className="flex items-center gap-2 rounded-sm px-3 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <RotateCcw className="size-3.5" />
           New Chat
@@ -122,7 +122,7 @@ export function ChatWindow() {
               }`}
             >
               {message.role === "assistant" && (
-                <span className="mr-3 grid size-8 place-items-center rounded-lg bg-violet-500/15 text-violet-300">
+                <span className="mr-3 grid size-8 place-items-center rounded-sm border border-border bg-card text-accent">
                   <Bot className="size-4" />
                 </span>
               )}
@@ -130,8 +130,8 @@ export function ChatWindow() {
               <div
                 className={
                   message.role === "user"
-                    ? "rounded-2xl rounded-tr-sm bg-violet-600 px-4 py-3 text-white max-w-[70%]"
-                    : "max-w-[70%] text-zinc-300 leading-7"
+                    ? "max-w-[70%] rounded-sm bg-primary px-4 py-3 text-primary-foreground"
+                    : "max-w-[70%] leading-7 text-foreground"
                 }
               >
                 {message.content}
@@ -139,21 +139,21 @@ export function ChatWindow() {
 
               {message.role === "assistant" && (
                 <button className="ml-2">
-                  <Copy className="size-4 text-zinc-500" />
+                  <Copy className="size-4 text-muted-foreground" />
                 </button>
               )}
             </motion.div>
           ))}
 
           {loading && (
-            <div className="text-zinc-400">
+            <div className="text-sm text-muted-foreground">
               Nexora is thinking...
             </div>
           )}
         </div>
       </div>
 
-      <div className="border-t border-white/[0.06] bg-[#080a11]/85 px-4 pt-3 pb-4">
+      <div className="border-t border-border bg-background px-4 pt-3 pb-4">
         <ChatInput onSend={handleSend} />
       </div>
     </div>

@@ -23,8 +23,8 @@ export default function ResumePage() {
         />
 
         <div className="my-6">
-          <section className="glass-panel rounded-2xl p-5 sm:p-6">
-            <p className="mb-5 text-sm font-semibold text-zinc-200">
+          <section className="glass-panel rounded-sm p-5 sm:p-6">
+            <p className="mb-5 text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
               Upload Resume
             </p>
 
@@ -35,10 +35,10 @@ export default function ResumePage() {
         <div className="mt-8 grid gap-5 lg:grid-cols">
           <div className="grid gap-5">
             {/* ATS Score */}
-            <section className="glass-panel rounded-2xl p-5 sm:p-6">
+            <section className="glass-panel rounded-sm p-5 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-zinc-200">
+                  <p className="editorial-title text-2xl text-foreground">
                     ATS Score
                   </p>
 
@@ -47,8 +47,8 @@ export default function ResumePage() {
                   </p>
                 </div>
 
-                <div className="grid size-20 place-items-center rounded-full border border-violet-500/20">
-                  <div className="text-2xl font-bold text-violet-400">
+                <div className="grid size-20 place-items-center rounded-full border border-[#d2c7ba]">
+                  <div className="editorial-title text-3xl text-accent">
                     {result?.ats_score ?? "--"}
                   </div>
                 </div>
@@ -56,16 +56,16 @@ export default function ResumePage() {
             </section>
 
             {/* AI Analysis */}
-            <section className="glass-panel rounded-2xl p-5 sm:p-6">
+            <section className="glass-panel rounded-sm p-5 sm:p-6">
               <div className="flex items-center gap-2">
-                <Lightbulb className="size-4 text-amber-400" />
+                <Lightbulb className="size-4 text-accent" />
 
-                <p className="text-sm font-semibold text-zinc-200">
+                <p className="editorial-title text-2xl text-foreground">
                   AI Analysis
                 </p>
               </div>
 
-              <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+              <div className="mt-5 rounded-sm border border-border bg-background p-4">
                 <pre className="whitespace-pre-wrap text-sm leading-7 text-zinc-300">
                   {result?.analysis ??
                     "Upload a resume to receive an AI-powered analysis."}
@@ -74,11 +74,11 @@ export default function ResumePage() {
             </section>
 
             {/* Status */}
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-              <CircleDashed className="size-4 text-violet-400" />
+            <div className="flex items-center gap-3 rounded-sm border border-border bg-card px-4 py-3">
+              <CircleDashed className="size-4 text-accent" />
 
               <div>
-                <p className="text-xs text-zinc-400">Analysis Status</p>
+                <p className="text-[9px] tracking-[0.2em] text-muted-foreground uppercase">Analysis Status</p>
 
                 <p className="text-sm font-medium text-zinc-200">
                   {result?.status ?? "Waiting for document"}

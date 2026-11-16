@@ -67,13 +67,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      className="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8"
+      className="glass-panel w-full max-w-md rounded-sm p-6 sm:p-9"
     >
       <div className="text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
+        <h1 className="editorial-title text-4xl text-foreground sm:text-5xl">
           {isSignup ? "Create your workspace" : "Welcome back"}
         </h1>
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-3 text-sm text-muted-foreground">
           {isSignup
             ? "Start building with intelligent tools today."
             : "Sign in to continue to Nexora AI."}

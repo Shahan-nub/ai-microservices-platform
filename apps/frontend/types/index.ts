@@ -8,12 +8,12 @@ export interface ChatMessage {
 }
 
 export interface Notification {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  timestamp: string;
+  created_at: string;
   type: "success" | "info" | "warning";
-  unread?: boolean;
+  unread: boolean;
 }
 
 export interface SearchResult {

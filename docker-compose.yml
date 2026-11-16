@@ -88,6 +88,12 @@ services:
     ports:
       - "8005:8000"
 
+    depends_on:
+      - postgres
+
+    env_file:
+      - ./services/auth-service/.env
+
   worker:
     build:
       context: ./workers/ai-worker

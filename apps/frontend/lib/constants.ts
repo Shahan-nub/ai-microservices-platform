@@ -41,6 +41,6 @@ export const FEATURES = [
     href: "/dashboard/notifications",
     icon: Bell,
     accent: "rose",
-    stat: "3 unread",
+    stat: "Activity center",
   },
 ] as const;

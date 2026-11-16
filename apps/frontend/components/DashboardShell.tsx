@@ -7,7 +7,7 @@ import { Sidebar } from "@/components/Sidebar";
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-background">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="md:pl-64">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
